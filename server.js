@@ -4,7 +4,7 @@ const info = require('./models/info');
 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://galina:galina@cluster0.ehnbj.mongodb.net/IT?retryWrites=true&w=majority", {
+mongoose.connect("", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
