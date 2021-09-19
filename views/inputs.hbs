@@ -1,0 +1,128 @@
+<div class="inputs">
+    <input type="text" placeholder="work" id="work" />
+    <input type="text" placeholder="name" id="name" />
+    <select name="Mood" id="mood">
+        <p>Настроение</p>
+        <option value="Хорошо">Хорошо</option>
+        <option value="Нормально">Нормально</option>
+        <option value="Плохо">Плохо</option>
+        <option selected value="Хочу спать">Хочу спать</option>
+    </select>
+    <input type="button" value="Send to Server" id="Sender" />
+    <div class="table_search">
+        <form action="/mood" method="GET">
+            <input id="search" name="search" type="text" placeholder="Поиск по имени">
+        </form>
+        <table border="1">
+            <caption>Настроение пользователей</caption>
+            <tr>
+                <th class="th">Work</th>
+                <th class="th">Name</th>
+                <th class="th">Mood</th>
+                <th class="th">Delete</th>
+            </tr>
+            {{#each table}}
+            <tr>
+                <td class="td">{{Work}}</td>
+                <td class="td">{{Name}}</td>
+                <td class="td">{{Mood}}</td>
+                <td><input id="deleteitem" type="button" name="{{_id}}" value="delete"></td>
+            </tr>
+            {{/each}}
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $(window).click((target) => {
+            if (target.target.id == 'deleteitem') {
+                $.ajax({
+                    url: '/mood/deleterow',
+                    method: 'POST',
+                    dataType: "json",
+                    data: {
+                        id: target.target.name
+                    },
+                }).then((data) => {
+                    console.log(data);
+                    if (data.status == 'reload') {
+                        document.location.reload();
+                    }
+                });
+            }
+        })
+    })
+
+
+    $('#search').change(() => {
+        $('form').trigger('submit');
+    })
+
+    $('#Sender').click(() => {
+        var data = {
+            work: $('#work').val(),
+            name: $('#name').val(),
+            mood: $('#mood option:selected').val()
+        }
+        $.ajax({
+            url: '/mood',
+            dataType: 'json',
+            method: 'POST',
+            data: data,
+            success: (res) => {
+                if (res.update == 'update') { console.log('reload'); document.location.reload(); }
+            }
+        })
+    })
+</script>
+
+<style>
+    .inputs {
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    #mood {
+        margin: 0;
+        width: 100%;
+        transform: translateX(5px);
+    }
+
+    .inputs>input,
+    #mood>option {
+        margin: 5px;
+        width: 100%;
+    }
+
+    .table_search {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        transform: translateX(-40px);
+    }
+
+    #search {
+        transform: translateX(-35px);
+        width: 100%;
+        margin: 10px;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    table {
+        border-collapse: collapse;
+        transform: translateX(-20px);
+        width: 350px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        background: rgb(255, 190, 12);
+    }
+
+    .th,
+    .td {
+        padding: 5px;
+
+    }
+</style>
